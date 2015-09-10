@@ -38,8 +38,8 @@ int main() {
 	Constants cons;
 	
 	int i,t ; //agent and time
-	double oldstrategy[cons.N]; //Array with the strategies of the previous round
-	double newstrategy[cons.N]; //Array with the strategies of the current round
+	int oldstrategy[cons.N]; //Array with the strategies of the previous round. 0 is C, 1 is D and 2 is delta
+	int newstrategy[cons.N]; //Array with the strategies of the current round. 0 is C, 1 is D and 2 is delta
 	double welfare, perc, perd, perdelta; //The total welfare variable and the percentages of players playing each strategy
 	
 	// ofstream for outputing and output files
@@ -90,7 +90,7 @@ int main() {
 		fileag << cons.L << " delta=" << cons.delta;
 		fileag << " beta=" << cons.beta << " r=" << cons.r;
 		fileag << " a=" << cons.a << endl;
-		fileag << "#This is in the form of a line for every time step" << endl;
+		fileag << "#This is in the form of a line for every time step. 0 is C, 1 is D and 2 is delta" << endl;
 	}	
 	
 	// The PARAMETER file	
@@ -98,8 +98,38 @@ int main() {
 	printparamsingleloop(filep,cons);
 	filep.close();
 	
+	//************ Initialize the strategy arrays and the variables. Printing things at time =0 ****
+	for(i=0; i < cons.N ; i++){
+		oldstrategy[i]=0;
+		newstrategy[i]=0;	
+	}
 	
+	welfare = 0.;
+	perc = 0.;
+	perdelta = 0.;
+	perd = 1. ;
 	
-
+	// Now I fill up the output files at t=0
+	printstuffsingleloop(filet, fileag, 0, welfare, perc, perd, perdelta, newstrategy ,cons); 	// Print time, welfare, percentages and the state of all agents at time t=0
+	//********************************************************************************************************************//
+	
+	/**************** HERE STARTS THE BIG TIME LOOP **********************/
+	
+	for(t=0; t<cons.T ; t++){
+		
+		//Here players update their strategies
+		updatestrategy(oldstrategy, newstrategy, cons, gslpointer);
+		//Here I compute the total welfare and the various percentages.
+		computetotalwelfare(newstrategy, welfare, perc, perd, perdelta, cons);
+		//Here I print the state of the system at time t
+		printstuffsingleloop(filet, fileag, t, welfare, perc, perd, perdelta, newstrategy ,cons);
+	}
+	
+	/********************* END OF THE BIG TIME LOOP **************************/
+	
+	//***** Close all the ofstreams
+	filet.close();
+	fileag.close();
+	
 	return 0;
 }
