@@ -1,0 +1,45 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amssymb,amsmath}
+
+\author{Stefano Duca}
+\title{General notes on the model and the code}
+
+\begin{document}
+
+\maketitle
+
+\section{Notes on the model}
+Here we are playing what we call a contract game in a prisoner's dilemma on a spatial lattice.
+
+The idea is that a player can offer a part of what he earns ($\Delta$) to the other player to make it convienent to cooperate. Of course he might be tempted to defect but, due to the preference of errors, maybe the cooperation will be stable.
+
+Here is the payoff matrix of the game:
+
+\begin{tabular}{|c|c|c|c|}
+\hline 
+• & C & D & Delta \\ 
+\hline 
+C & r,r & -a,1 & r+$\Delta$, r-$\Delta$ \\ 
+\hline 
+D & 1,-a & 0,0 & 1, -a \\ 
+\hline 
+Delta & r- $\Delta$, r+$\Delta$ & -a, 1 & r,r, \\ 
+\hline 
+\end{tabular} 
+
+The player play a logit best response with parameter delta, responding to the strategy array of the previous round.
+
+\section{Notes on the code}
+\begin{enumerate}
+\item  So far we consider 3 types of lattice:
+0 stands for squared lattice with Von Neumann n.n. ;
+1 stands for squared lattice with Moore n.n.;
+2 stands for ring lattice.
+
+\item 0 is C, 1 is D and 2 is Delta
+\end{enumerate}
+
+
+
+\end{document}

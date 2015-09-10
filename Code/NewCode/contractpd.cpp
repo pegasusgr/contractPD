@@ -21,37 +21,85 @@
 #include<gsl/gsl_randist.h> //Needed for the beta pdf
 
 // My includes
-//#include "contractpd_Constants.h"
-//#include "ensemble_Fcts.h"
+#include "Fcts.h"
+#include "Constants.h"
 
 using namespace std;
 
-class agent {
-	int x, y, s;
-	public:
-	void setplace(int w, int z){x=w; y=z;}
-	void setstrategy(int w){s=w;}
-	int getx(){return x;}	
-	int gety(){return y;}	
-	int gets(){return s;}
-};
-
-
 int main() {
-	// Start by building the lattice.
-	// Lattice width: w
-	int w=10;
-	// Lattice height: h
-	int h=10;
-	// Nuber of agents
-	int N=w*h;
-	agent indiv[N];
-	for(int i=0;i<N;i++){
-		indiv[i].setplace(i%w,i/w);
-		cout << indiv[i].getx()<< endl;
-		cout << indiv[i].gety()<< endl;
-	}
+	
+	// *********** Initialising fields and variables *********** //
+	// RNG Stuff 	
+	gsl_rng *gslpointer; 	// Pointer to the type of rng
+	FILE *pfile; 		// File to read from /usr/urandom
+	unsigned int seed; 	// Seed of the random number generator
 
+	// My Constants instance for reading/holding all the input varibles 	
+	Constants cons;
+	
+	int i,t ; //agent and time
+	double oldstrategy[cons.N]; //Array with the strategies of the previous round
+	double newstrategy[cons.N]; //Array with the strategies of the current round
+	double welfare, perc, perd, perdelta; //The total welfare variable and the percentages of players playing each strategy
+	
+	// ofstream for outputing and output files
+	ofstream filep;		// Parameter output stream 
+	ofstream filet;		// Main/time output stream. Here we write the time, the total welfare and the percentage of players playing each strategy for every time step
+	ofstream fileag; 	// Output stream time where we store the strategy of each agent at each time step!
+	
+	const char filenamep[]="parameters.txt";	// Parameter output filename	
+	const char filenamet[]="time.txt";		// Main/time output filename
+	const char filenameag[]="agents.txt"; 		// Agents output file name
+	
+	
+	// *********** Initialising the GSL Mersenne twister RNG & a C srand RNG *********** //
+
+	// Print for testing
+	cout << "Initialising the RNG" << endl;
+
+
+    // GSL Mersenne Twister 19937 RNG
+	pfile = fopen ("/dev/urandom", "r");
+	i=fread (&seed, sizeof (seed), 1, pfile);	// I added the rand= ... just to not be bothered anymore by the warnings!
+	fclose(pfile);
+	gslpointer = gsl_rng_alloc(gsl_rng_mt19937); 	// I'm using the "Mersenne Twister" generator!
+	gsl_rng_set(gslpointer,seed); 			// Starting the generator
+	
+
+	// *********** Initialising the OUTPUT FILES with HEADERS *********** //
+
+	// Print for testing
+	cout << "Initialising the output files" << endl;
+	
+	// The TIME file
+	filet.open(filenamet,ios::out|ios::trunc); //Open the time file
+	if(filet.is_open()){
+		filet << "#Results for the simulation contractpd with:"<<endl;
+		filet << "#N=" << cons.N << " T=" << cons.T  << " L=";
+		filet << cons.L << " delta=" << cons.delta;
+		filet << " beta=" << cons.beta << " r=" << cons.r;
+		filet << " a=" << cons.a << endl;
+		filet << "#This is in the form of t, welfare, C percentage, D percentage and delta percentage" << endl;
+	}
+	
+	// The AGENTS file
+	fileag.open(filenameag,ios::out|ios::trunc); //Open the time file
+	if(fileag.is_open()){
+		fileag << "#Results for the simulation contractpd with:"<<endl;
+		fileag << "#N=" << cons.N << " T=" << cons.T  << " L=";
+		fileag << cons.L << " delta=" << cons.delta;
+		fileag << " beta=" << cons.beta << " r=" << cons.r;
+		fileag << " a=" << cons.a << endl;
+		fileag << "#This is in the form of a line for every time step" << endl;
+	}	
+	
+	// The PARAMETER file	
+	filep.open(filenamep,ios::out|ios::trunc);
+	printparamsingleloop(filep,cons);
+	filep.close();
+	
+	
+	
 
 	return 0;
 }
