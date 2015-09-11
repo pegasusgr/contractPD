@@ -21,6 +21,7 @@
 
 // My includes
 #include "Constants.h"
+#include "neighbors.h"
 
 
 
@@ -108,6 +109,7 @@ void updatestrategy(int *oldstrategy, int *newstrategy, Constants cons, gsl_rng 
 	int M=3; //The number of strategies (for sake of generalization)
 	int i;
 	int nc, nd, ndelta, totnn; //Number of n.n. playing each strategy and total number of n.n.
+	vector<int> neinum;	//The array that contains the number of n.n. playing each strategy.
 	double randomnum; //A random number
 	double probarr[M]; //Here I will store the probability for each of the strategies to be played
 	double expected[M]; //Here I will store the expected utility for each of the strategies
@@ -118,8 +120,11 @@ void updatestrategy(int *oldstrategy, int *newstrategy, Constants cons, gsl_rng 
 	//Here I update the strategy for each of the agents
 
 	for(i=0; i< cons.N; i++){
-		
-		getnumber of each thing (as a fct of i, oldstrategy and the type of lattice);
+		//getnumber of each thing (as a fct of i, oldstrategy and the type of lattice);
+		neinum=neighborstrategies(i, oldstrategy, cons);	
+		nd=neinum[0];
+		nc=neinum[1];
+		ndelta=neinum[2];			
 		totnn = nc + nd + ndelta; //Compute the total number of neighbours
 		//Now I compute the expected utility for each of the strategies
 		expected[0]= (nc*cons.r -nd*cons.a +ndelta*(cons.r+cons.delta))/totnn; //If cooperate: nc*r - nd*a + ndelta*(r+delta)
@@ -151,11 +156,12 @@ void updatestrategy(int *oldstrategy, int *newstrategy, Constants cons, gsl_rng 
 /*********************************************************************************************************/
 
 /****************Function that computes the welfare and the percentage of each strategy on the lattice *********/
-void computetotalwelfare(int *newstrategy, double *welfare, double *perc, double *perd, double *perdelta,Constants cons){
+void computetotalwelfare(int *newstrategy, double &welfare, double &perc, double &perd, double &perdelta,Constants cons){
 	
 	int i;
 	double sum; //sum variable
 	int nc, nd, ndelta, totnn; //Number of n.n. playing each strategy and total number of n.n.
+	vector<int> neinum;	//The array that contains the number of n.n. playing each strategy.
 	int countc, countd, countdelta; //Integers used for counting
 	
 	
@@ -165,7 +171,11 @@ void computetotalwelfare(int *newstrategy, double *welfare, double *perc, double
 	countdelta=0;
 	
 	for(i=0; i< cons.N; i++){
-		getnumber of each thing (as a fct of i, oldstrategy and the type of lattice);
+		//getnumber of each thing (as a fct of i, newstrategy and the type of lattice);
+		neinum=neighborstrategies(i, newstrategy, cons);	
+		nd=neinum[0];
+		nc=neinum[1];
+		ndelta=neinum[2];			
 		totnn = nc + nd + ndelta; //Compute the total number of neighbours
 		//Check which strategy the player is using and update the utility accordingly
 		switch(newstrategy[i]){
@@ -211,4 +221,10 @@ void computetotalwelfare(int *newstrategy, double *welfare, double *perc, double
 	return;	
 }
 /*************************************************************************************************************************/
-
+//Move to next round
+void nextround(int *oldstrategy, int *newstrategy,Constants cons){
+	int i;
+	for(i=0;i<cons.N;i++){
+		oldstrategy[i]=newstrategy[i];
+	}
+}

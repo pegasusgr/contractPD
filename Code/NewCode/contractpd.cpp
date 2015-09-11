@@ -123,6 +123,8 @@ int main() {
 		computetotalwelfare(newstrategy, welfare, perc, perd, perdelta, cons);
 		//Here I print the state of the system at time t
 		printstuffsingleloop(filet, fileag, t, welfare, perc, perd, perdelta, newstrategy ,cons);
+		nextround(oldstrategy,newstrategy,cons);
+
 	}
 	
 	/********************* END OF THE BIG TIME LOOP **************************/
