@@ -100,14 +100,15 @@ int main() {
 	
 	//************ Initialize the strategy arrays and the variables. Printing things at time =0 ****
 	for(i=0; i < cons.N ; i++){
-		oldstrategy[i]=0;
-		newstrategy[i]=0;	
+		oldstrategy[i]=1;
+		newstrategy[i]=1;	
 	}
 	
+	//for(i=0; i <cons.N; i++ ){oldstrategy[i]=0; newstrategy[i]=0;}
 	welfare = 0.;
 	perc = 0.;
-	perdelta = 0.;
-	perd = 1. ;
+	perdelta = 1.;
+	perd = 0. ;
 	
 	// Now I fill up the output files at t=0
 	printstuffsingleloop(filet, fileag, 0, welfare, perc, perd, perdelta, newstrategy ,cons); 	// Print time, welfare, percentages and the state of all agents at time t=0
@@ -124,6 +125,7 @@ int main() {
 		//Here I print the state of the system at time t
 		cout<<"Time is "<<t<<endl;
 		printstuffsingleloop(filet, fileag, t, welfare, perc, perd, perdelta, newstrategy ,cons);
+		//Update oldstrategy
 		nextround(oldstrategy,newstrategy,cons);
 
 	}

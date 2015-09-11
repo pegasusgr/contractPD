@@ -127,9 +127,9 @@ void updatestrategy(int *oldstrategy, int *newstrategy, Constants cons, gsl_rng 
 		ndelta=neinum[2];			
 		totnn = nc + nd + ndelta; //Compute the total number of neighbours
 		//Now I compute the expected utility for each of the strategies
-		expected[0]= (nc*cons.r -nd*cons.a +ndelta*(cons.r+cons.delta))/totnn; //If cooperate: nc*r - nd*a + ndelta*(r+delta)
-		expected[1]= (nc + ndelta)/totnn; //If defect: nc*1 + nd*0 + ndelta*1
-		expected[2]= (nc*(cons.r-cons.delta) -nd*cons.a + ndelta*cons.r)/totnn; //If delta: nc*(r-delta) - nd*a + ndelta*r
+		expected[0]= 1.*(nc*cons.r -nd*cons.a +ndelta*(cons.r+cons.delta))/totnn; //If cooperate: nc*r - nd*a + ndelta*(r+delta)
+		expected[1]= 1.*(nc + ndelta)/totnn; //If defect: nc*1 + nd*0 + ndelta*1
+		expected[2]= 1.*(nc*(cons.r-cons.delta) -nd*cons.a + ndelta*cons.r)/totnn; //If delta: nc*(r-delta) - nd*a + ndelta*r
 		
 		/******Now I compute the probabilities for each of the strategies*****/
 		sum = 0;
