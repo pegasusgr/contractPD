@@ -122,8 +122,8 @@ void updatestrategy(int *oldstrategy, int *newstrategy, Constants cons, gsl_rng 
 	for(i=0; i< cons.N; i++){
 		//getnumber of each thing (as a fct of i, oldstrategy and the type of lattice);
 		neinum=neighborstrategies(i, oldstrategy, cons);	
-		nd=neinum[0];
-		nc=neinum[1];
+		nc=neinum[0];
+		nd=neinum[1];
 		ndelta=neinum[2];			
 		totnn = nc + nd + ndelta; //Compute the total number of neighbours
 		//Now I compute the expected utility for each of the strategies
@@ -173,8 +173,8 @@ void computetotalwelfare(int *newstrategy, double &welfare, double &perc, double
 	for(i=0; i< cons.N; i++){
 		//getnumber of each thing (as a fct of i, newstrategy and the type of lattice);
 		neinum=neighborstrategies(i, newstrategy, cons);	
-		nd=neinum[0];
-		nc=neinum[1];
+		nc=neinum[0];
+		nd=neinum[1];
 		ndelta=neinum[2];			
 		totnn = nc + nd + ndelta; //Compute the total number of neighbours
 		//Check which strategy the player is using and update the utility accordingly
