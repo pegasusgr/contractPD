@@ -332,15 +332,15 @@ void updatestrategyimitation(int *oldstrategy, int *newstrategy, Constants cons,
 				cout<<"ERROR in assigning the average payoffs !!!!!!"<<endl;
 				exit(3);
 		}
-		
+		cout<<"C and D sono "<<average[0]<<"  "<<average[1]<<" for strategy "<<oldstrategy[i]<<endl;
 		/******Now I renormalize the payoffs and compute the probabilities for each of the strategies*****/
 		sum = 0;
-		if(nc==0){probarr[0]=0;} //Yeah, here it coudl have been done more elegantly with a bool array, but it's only 3 strategies anyway!
+		if(nc == 0){probarr[0]=0;} //Yeah, here it could have been done more elegantly with a bool array, but it's only 3 strategies anyway!
 		else{
 			probarr[0] = exp(cons.beta*(average[0]/nc)); //The logit prob
 			sum = sum  + probarr[0];
 		}
-		if(nd==0){probarr[1]=0;}
+		if(nd == 0){probarr[1]=0;}
 		else{
 			probarr[1] = exp( cons.beta*(average[1]/nd) ); //The logit prob
 			sum = sum + probarr[1];
@@ -367,3 +367,41 @@ void updatestrategyimitation(int *oldstrategy, int *newstrategy, Constants cons,
 	return ;	
 }
 /**************************************************************************************************************/
+
+/************ This function receives an integers as input as returns one of the other two strategies with a 50% probability *************************/
+int flipcoinewstrategy(int k, gsl_rng *gslpointer){
+	int i;
+	int M=3; //The number of strategies
+	double randnum;
+	
+	randnum = gsl_ran_flat(gslpointer,0,1);
+	if(randnum < 0.5){ //With 50% probability change the strategy to i+1; if i+1 is M, then the strategy is 0. Periodic boundary conditions on 0,1,2.
+		i = k + 1; 
+		if(i >=M){
+			i=0;
+		}
+	}
+	else{ //With 50% probability change the strategy to i-1; if i+1 is -1, then the strategy is M. Periodic boundary conditions on 0,1,2.
+		i = k - 1;
+		if(i < 0){
+			i=M-1;	
+		}
+	} 
+	
+	return i;
+}
+
+/******************* Here I just compute the probability of somebody spotaneously mutating ****************************/
+void changeformutation(int *strategy, Constants cons, gsl_rng *gslpointer){
+	int i;
+	double randnum;
+	
+	for(i=0; i<cons.N; i++){
+		randnum = gsl_ran_flat(gslpointer,0,1); //Generate a random number btw 0 and 1.
+		if(randnum < cons.mu){ //Check if agent i is mutating
+			strategy[i] = flipcoinewstrategy(strategy[i], gslpointer); //If yes, get the new strategy
+		}
+	}
+	
+	return ;
+}

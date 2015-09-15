@@ -103,11 +103,14 @@ int main() {
 		oldstrategy[i]=1;
 		newstrategy[i]=1;	
 	}
-	
+	for(i=0; i < cons.N/2 ; i++){
+		oldstrategy[i]=0;
+		newstrategy[i]=0;	
+	}
 	//for(i=0; i <cons.N; i++ ){oldstrategy[i]=0; newstrategy[i]=0;}
 	welfare = 0.;
-	perc = 0.;
-	perdelta = 1.;
+	perc = 0.5;
+	perdelta = 0.5;
 	perd = 0. ;
 	
 	// Now I fill up the output files at t=0
@@ -116,8 +119,10 @@ int main() {
 	
 	/**************** HERE STARTS THE BIG TIME LOOP **********************/
 	
-	for(t=0; t<cons.T ; t++){
+	for(t=1; t<cons.T ; t++){
 		
+		/*  Here we give to players the possibility to mutate to new strategies */
+		changeformutation(oldstrategy, cons, gslpointer);		
 		/* Here players update their strategies according to a logit best response */
 		//updatestrategy(oldstrategy, newstrategy, cons, gslpointer);
 		/* Here players update their strategies according to a logit imitation rule */
