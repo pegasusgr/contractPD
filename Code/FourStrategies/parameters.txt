@@ -1,0 +1,21 @@
+#Number of agents:
+N= 10000
+
+#Number of time steps:
+T= 1000
+
+#Type of lattice: 0 for Von Neumann square lattice; 1 for Moore square lattice; 2 for ring:
+L= 0
+
+#value of the contract:
+delta= 0
+
+#beta value for the logit:
+beta= 5
+
+#cooperation reward:
+r= 0.8
+
+#sucker's payoff:
+a= 0.3
+

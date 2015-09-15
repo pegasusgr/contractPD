@@ -123,7 +123,7 @@ int main() {
 		//Here I compute the total welfare and the various percentages.
 		computetotalwelfare(newstrategy, welfare, perc, perd, perdelta, cons);
 		//Here I print the state of the system at time t
-		cout<<"Time is "<<t<<endl;
+		if(t%100==0) cout<<"Time is "<<t<<endl;
 		printstuffsingleloop(filet, fileag, t, welfare, perc, perd, perdelta, newstrategy ,cons);
 		//Update oldstrategy
 		nextround(oldstrategy,newstrategy,cons);
