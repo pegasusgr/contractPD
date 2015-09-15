@@ -118,8 +118,10 @@ int main() {
 	
 	for(t=0; t<cons.T ; t++){
 		
-		//Here players update their strategies
-		updatestrategy(oldstrategy, newstrategy, cons, gslpointer);
+		/* Here players update their strategies according to a logit best response */
+		//updatestrategy(oldstrategy, newstrategy, cons, gslpointer);
+		/* Here players update their strategies according to a logit imitation rule */
+		updatestrategyimitation(oldstrategy, newstrategy, cons, gslpointer);
 		//Here I compute the total welfare and the various percentages.
 		computetotalwelfare(newstrategy, welfare, perc, perd, perdelta, cons);
 		//Here I print the state of the system at time t

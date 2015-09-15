@@ -21,4 +21,5 @@ class Constants{
 	double beta; //beta value for the logit
 	double r; //cooperation reward
     double a; //sucker's payoff
+    double mu; //Mutation probability
 };

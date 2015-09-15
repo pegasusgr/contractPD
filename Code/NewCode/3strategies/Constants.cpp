@@ -33,7 +33,7 @@ Constants::~Constants(){}
 Constants::Constants(){ //Note that name must be the entire path; i.e. "./config.conf"
 	char line[256];
 	int linenum=0;
-	int count=0, M=7; //M is the amount of parameters I have to give, count will range from 0 to M-1
+	int count=0, M=8; //M is the amount of parameters I have to give, count will range from 0 to M-1
 	double vector[M]; //will store the M parameters
 	FILE *pfile;
 
@@ -56,5 +56,6 @@ Constants::Constants(){ //Note that name must be the entire path; i.e. "./config
 	beta=vector[4]; //beta value for the logit
 	r=vector[5]; //cooperation reward
     a=vector[6]; //sucker's payoff
+    mu=vector[7]; //mutation probability
 }
 Constants::~Constants(){}
