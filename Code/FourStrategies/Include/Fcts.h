@@ -28,7 +28,7 @@
 
 
 using namespace std;
-double game(int, int, Constants);
+double game(int, int, int,Constants);
 /************************* Function that prints all the parameters in a file **************************************/
 void printparamsingleloop(ofstream& filec, Constants cons){
 	filec<<"#Number of agents:"<<endl;
@@ -141,7 +141,7 @@ void updatestrategy(int *oldstrategy, int *newstrategy, Constants cons, gsl_rng 
 			expected[j]=0;
 			for (k=0;k<M;k++){
 				//if(transit(oldstrategy[i],j,cons)){
-					expected[j] = expected[j] + neinum[k]*game(j,k,cons);
+					expected[j] = expected[j] + neinum[k]*game(j,k,oldstrategy[i],cons);
 				//}
 			}
 			expected[j]=expected[j]/totnn;
@@ -196,7 +196,7 @@ void computetotalwelfare(int *newstrategy, double &welfare, double &perc, double
 		neinum=neighborstrategies(i, newstrategy, cons);	
 		//Check which strategy the player is using and update the utility accordingly
 		for(j=0;j<4;j++){
-			sum = sum + neinum[j]*game(newstrategy[i],j,cons); // Compute utility
+			sum = sum + neinum[j]*game(newstrategy[i],j,j,cons); // Compute utility TODO
 		}
 			countn[newstrategy[i]]++; // Count the number of each of the strategies
 	}
@@ -232,8 +232,10 @@ void nextround(int *oldstrategy, int *newstrategy,Constants cons){
 
 
 /**************** This function takes as inputs my strategy and the other player's strategy (and parameters) and returns my payoff. *********/
-double game(int mystrategy, int otherstrategy, Constants cons){
+double game(int mystrategy, int otherstrategy, int myoldstrategy,Constants cons){
 	double payoff=-10;
+	int defect=(int)(myoldstrategy==1);
+	defect=1;
 	switch (mystrategy){
 		case 0:	// I am Cooperator
 			switch (otherstrategy){
@@ -244,7 +246,7 @@ double game(int mystrategy, int otherstrategy, Constants cons){
 					payoff=-cons.a;
 					break;
 				case 2:	// Other player is Generous
-					payoff=cons.r+cons.delta;
+					payoff=cons.r+defect*cons.delta;
 					break;
 				case 3:	// Other player is Opportunistic
 					payoff=cons.r-cons.delta;
