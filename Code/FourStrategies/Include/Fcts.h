@@ -14,6 +14,8 @@
 #include <algorithm>    
 #include <vector>       
 #include <new> 
+#include<numeric>
+
 
 // Gnu Scientific Library (gsl) includes
 #include<gsl/gsl_rng.h>
@@ -26,7 +28,7 @@
 
 
 using namespace std;
-
+double game(int, int, Constants);
 /************************* Function that prints all the parameters in a file **************************************/
 void printparamsingleloop(ofstream& filec, Constants cons){
 	filec<<"#Number of agents:"<<endl;
@@ -51,11 +53,11 @@ void printparamsingleloop(ofstream& filec, Constants cons){
 
 In particular, it prints time, welfare and percentages on one file and the state of all agents at time t on another file */
 
-void printstuffsingleloop(ofstream& filet, ofstream& fileag, int t, double welfare, double perc, double perd, double perdelta, int *strategy ,Constants cons){
+void printstuffsingleloop(ofstream& filet, ofstream& fileag, int t, double welfare, double perc, double perd, double pergen, double peropp, int *strategy ,Constants cons){
 	
 	int i; //dummy variable
 	
-    filet<<t<<" "<<welfare<<" "<<perc<<" "<<perd<<" "<<perdelta<<endl; //Here I print time, welfare and percentages.
+    filet<<t<<" "<<welfare<<" "<<perc<<" "<<perd<<" "<<pergen<<" "<<peropp<<endl; //Here I print time, welfare and percentages.
 	
     for(i=0;i<cons.N;i++){ //Here I print the strategy for each agent at each time step and.
         fileag<<strategy[i]<<" ";
@@ -68,7 +70,7 @@ void printstuffsingleloop(ofstream& filet, ofstream& fileag, int t, double welfa
 /**************************************************************************/
 
 /*********************************************/
-int binaryprobsearch(double *Gamma, int M, double x) { //Binary search. Gamma is the array of cumulative prob. M is the lenght of the array and x is the random number between zero and one
+int binaryprobsearch(vector<double> Gamma, int M, double x) { //Binary search. Gamma is the array of cumulative prob. M is the lenght of the array and x is the random number between zero and one
     int a, b, l, result;
     bool check;
     a = 0;
@@ -103,18 +105,24 @@ int binaryprobsearch(double *Gamma, int M, double x) { //Binary search. Gamma is
 }
 /******************************************************************/
 
+/********************* Function that checks whether type i can transition to type j***********/
+int transit(int i, int j, Constants cons){
+	int trans;
+	trans=cons.transition[cons.M*i+j];
+	return trans;
+}
 /****************** Function that updates other people strategy *************************/
 void updatestrategy(int *oldstrategy, int *newstrategy, Constants cons, gsl_rng *gslpointer){
-	
-	int M=3; //The number of strategies (for sake of generalization)
-	int i;
-	int nc, nd, ndelta, totnn; //Number of n.n. playing each strategy and total number of n.n.
+//cout<<"in updatestrategy"<<endl;	
+	int M=cons.M; //The number of strategies (for sake of generalization)
+	int i,j;
+	int  totnn; //Number of n.n. playing each strategy and total number of n.n.
 	vector<int> neinum;	//The array that contains the number of n.n. playing each strategy.
 	double randomnum; //A random number
-	double probarr[M]; //Here I will store the probability for each of the strategies to be played
+	vector<double> provec(M,0); //Here I will store the probability for each of the strategies to be played
 	double expected[M]; //Here I will store the expected utility for each of the strategies
 	double sum; //sum variable
-	double cumprob[M]; //The array of cumulative probabilities
+	vector<double> cumprob(M,0); //The array of cumulative probabilities
 	int k; //dummy variable
 	
 	//Here I update the strategy for each of the agents
@@ -122,31 +130,48 @@ void updatestrategy(int *oldstrategy, int *newstrategy, Constants cons, gsl_rng 
 	for(i=0; i< cons.N; i++){
 		//getnumber of each thing (as a fct of i, oldstrategy and the type of lattice);
 		neinum=neighborstrategies(i, oldstrategy, cons);	
-		nc=neinum[0];
-		nd=neinum[1];
-		ndelta=neinum[2];			
-		totnn = nc + nd + ndelta; //Compute the total number of neighbours
+		totnn=0;
+		for (j=0;j<M;j++){
+			totnn = totnn + neinum[j];
+		}
+//cout<<"in updatestrategy, player "<<i<<endl;	
+		
 		//Now I compute the expected utility for each of the strategies
-		expected[0]= 1.*(nc*cons.r -nd*cons.a +ndelta*(cons.r+cons.delta))/totnn; //If cooperate: nc*r - nd*a + ndelta*(r+delta)
-		expected[1]= 1.*(nc + ndelta)/totnn; //If defect: nc*1 + nd*0 + ndelta*1
-		expected[2]= 1.*(nc*(cons.r-cons.delta) -nd*cons.a + ndelta*cons.r)/totnn; //If delta: nc*(r-delta) - nd*a + ndelta*r
+		for(j=0;j<M;j++){
+			expected[j]=0;
+			for (k=0;k<M;k++){
+				//if(transit(oldstrategy[i],j,cons)){
+					expected[j] = expected[j] + neinum[k]*game(j,k,cons);
+				//}
+			}
+			expected[j]=expected[j]/totnn;
+		}
 		
 		/******Now I compute the probabilities for each of the strategies*****/
 		sum = 0;
 		for(k=0; k < M; k++){
-			probarr[k] = exp(cons.beta * expected[k]);
-			sum = sum + probarr[k];
+			provec[k]=0;
+			if(transit(oldstrategy[i],k,cons)){
+				provec[k]=(exp(cons.beta * expected[k]));
+			}
 		}
+		sum= accumulate(provec.begin(), provec.end(), 0.0);
 		//Here I renormalize but I have to do the first by hand due to cumprob
-		probarr[0] = probarr[0]/sum;
-		cumprob[0]=probarr[0];
-		for(k=1; k < M; k++){
-			probarr[k] = probarr[k]/sum;
-			cumprob[k]=cumprob[k-1] + probarr[k];
+		provec[0] = provec[0]/sum;
+		cumprob[0]=provec[0];
+		//cout<<"Probabilities:"<< cumprob[0]<<" ";
+		for(k=1; k <M; k++){
+			provec[k] = provec[k]/sum;
+			cumprob[k]=(cumprob[k-1] + provec[k]);
+			//cout<<cumprob[k]<<" ";
 		}
+		//cout<<endl;
+		
 		// Now I sample the random number:
 		randomnum = gsl_ran_flat(gslpointer,0,1); //Generate a random number btw 0 and 1. Note that I use utility here just to not use another variable
-    	k=binaryprobsearch(&cumprob[0],M,randomnum); //Here I compute which strategy is the agent i is using. Note that I use k here just to not use another variable
+    	k=binaryprobsearch(cumprob,M,randomnum); //Here I compute which strategy is the agent i is using. Note that I use k here just to not use another variable
+	//cumprob.clear();
+	//provec.clear();
 		//Hence:
 		newstrategy[i] = k;
 	}
@@ -156,67 +181,43 @@ void updatestrategy(int *oldstrategy, int *newstrategy, Constants cons, gsl_rng 
 /*********************************************************************************************************/
 
 /****************Function that computes the welfare and the percentage of each strategy on the lattice *********/
-void computetotalwelfare(int *newstrategy, double &welfare, double &perc, double &perd, double &perdelta,Constants cons){
-	
-	int i;
+void computetotalwelfare(int *newstrategy, double &welfare, double &perc, double &perd, double &pergen, double &peropp,Constants cons){
+	int i,j;
 	double sum; //sum variable
-	int nc, nd, ndelta, totnn; //Number of n.n. playing each strategy and total number of n.n.
+	int totnn; //Number of n.n. playing each strategy and total number of n.n.
 	vector<int> neinum;	//The array that contains the number of n.n. playing each strategy.
-	int countc, countd, countdelta; //Integers used for counting
+	int countn[4]={}; // Integers for counting
 	
 	
 	sum = 0;
-	countc=0;
-	countd=0;
-	countdelta=0;
 	
 	for(i=0; i< cons.N; i++){
 		//getnumber of each thing (as a fct of i, newstrategy and the type of lattice);
 		neinum=neighborstrategies(i, newstrategy, cons);	
-		nc=neinum[0];
-		nd=neinum[1];
-		ndelta=neinum[2];			
-		totnn = nc + nd + ndelta; //Compute the total number of neighbours
 		//Check which strategy the player is using and update the utility accordingly
-		switch(newstrategy[i]){
-			
-			case 0:
-				sum = sum + (nc*cons.r -nd*cons.a +ndelta*(cons.r+cons.delta))/totnn; //The payoff that you get from cooperating
-				countc ++;
-				break;
-			
-			case 1:
-				sum = sum + (nc + ndelta)/totnn; //The payoff that you get from defecting
-				countd ++;
-				break;
-				
-			case 2:
-				sum = sum + (nc*(cons.r-cons.delta) -nd*cons.a + ndelta*cons.r)/totnn; //The payoff that you get from playing delta
-				countdelta ++;
-				break;
-				
-			default:
-				cout<<"ERROR!!!!!!"<<endl;
-				exit(1);
+		for(j=0;j<4;j++){
+			sum = sum + neinum[j]*game(newstrategy[i],j,cons); // Compute utility
 		}
-		
-		
+			countn[newstrategy[i]]++; // Count the number of each of the strategies
 	}
 	
 	//Here I save the welfare
 	welfare = sum;
-	
+	totnn=0;	
 	//Check that the total number of players sums up to one
-	totnn = countc + countd + countdelta;
+	for(j=0;j<4;j++){
+		totnn = totnn + countn[j];
+	}
 	if(totnn != cons.N){
 		cout<<"ERRORRRR!!! AND IN THE COUNTING"<<endl;
 		exit(2);	
 	}
 	
 	//Here I save the percentages
-	perc = (double) countc/cons.N;
-	perd = (double) countd/cons.N;
-	perdelta = (double) countdelta/cons.N;
+	perc = (double) countn[0]/cons.N;
+	perd = (double) countn[1]/cons.N;
+	pergen = (double) countn[2]/cons.N;
+	peropp = (double) countn[3]/cons.N;
 	
 	return;	
 }
@@ -227,4 +228,77 @@ void nextround(int *oldstrategy, int *newstrategy,Constants cons){
 	for(i=0;i<cons.N;i++){
 		oldstrategy[i]=newstrategy[i];
 	}
+}
+
+
+/**************** This function takes as inputs my strategy and the other player's strategy (and parameters) and returns my payoff. *********/
+double game(int mystrategy, int otherstrategy, Constants cons){
+	double payoff=-10;
+	switch (mystrategy){
+		case 0:	// I am Cooperator
+			switch (otherstrategy){
+				case 0:	// Other player is Cooperator
+					payoff=cons.r;
+					break;
+				case 1:	// Other player is Defector
+					payoff=-cons.a;
+					break;
+				case 2:	// Other player is Generous
+					payoff=cons.r+cons.delta;
+					break;
+				case 3:	// Other player is Opportunistic
+					payoff=cons.r-cons.delta;
+					break;
+			}
+			break;
+		case 1: // I am Defector
+			switch (otherstrategy){
+				case 0:	// Other player is Cooperator
+					payoff=1.;
+					break;
+				case 1:	// Other player is Defector
+					payoff=0.;
+					break;
+				case 2:	// Other player is Generous
+					payoff=1.;
+					break;
+				case 3:	// Other player is Opportunistic
+					payoff=1.;
+					break;
+			}
+			break;
+		case 2: // I am Generous
+			switch (otherstrategy){
+				case 0:	// Other player is Cooperator
+					payoff=cons.r-cons.delta;
+					break;
+				case 1:	// Other player is Defector
+					payoff=-cons.a;
+					break;
+				case 2:	// Other player is Generous
+					payoff=cons.r;
+					break;
+				case 3:	// Other player is Opportunistic
+					payoff=cons.r-2*cons.delta;
+					break;
+			}
+			break;
+		case 3: // I am Opportunistic
+			switch (otherstrategy){
+				case 0:	// Other player is Cooperator
+					payoff=cons.r+cons.delta;
+					break;
+				case 1:	// Other player is Defector
+					payoff=-cons.a;
+					break;
+				case 2:	// Other player is Generous
+					payoff=cons.r+2*cons.delta;
+					break;
+				case 3:	// Other player is Opportunistic
+					payoff=cons.r;
+					break;
+			}
+			break;
+	}
+	return payoff;
 }

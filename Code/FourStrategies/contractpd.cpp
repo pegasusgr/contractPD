@@ -11,10 +11,14 @@
 #include<fstream>
 #include<math.h>
 #include<iostream>
-#include <iomanip>
-#include <new>
-#include <algorithm>    
-#include <vector> 
+#include<iomanip>
+#include<new>
+#include<algorithm>    
+#include<vector> 
+#include<typeinfo>
+#include<string>
+#include<iostream>
+#include<fstream>
 
 // Gnu Scientific Library (gsl) includes
 #include<gsl/gsl_rng.h>
@@ -37,10 +41,10 @@ int main() {
 	// My Constants instance for reading/holding all the input varibles 	
 	Constants cons;
 	
-	int i,t ; //agent and time
-	int oldstrategy[cons.N]; //Array with the strategies of the previous round. 0 is C, 1 is D and 2 is delta
-	int newstrategy[cons.N]; //Array with the strategies of the current round. 0 is C, 1 is D and 2 is delta
-	double welfare, perc, perd, perdelta; //The total welfare variable and the percentages of players playing each strategy
+	int i,t; //agent and time
+	int oldstrategy[cons.N]; //Array with the strategies of the previous round. 0 is C, 1 is D, 2 is generous, 3 is opportunistic
+	int newstrategy[cons.N]; //Array with the strategies of the current round. 0 is C, 1 is D, 2 is generous, 3 is opportunistic
+	double welfare, perc, perd, pergen, peropp; //The total welfare variable and the percentages of players playing each strategy
 	
 	// ofstream for outputing and output files
 	ofstream filep;		// Parameter output stream 
@@ -98,6 +102,7 @@ int main() {
 	printparamsingleloop(filep,cons);
 	filep.close();
 	
+	
 	//************ Initialize the strategy arrays and the variables. Printing things at time =0 ****
 	for(i=0; i < cons.N ; i++){
 		oldstrategy[i]=1;
@@ -107,24 +112,27 @@ int main() {
 	//for(i=0; i <cons.N; i++ ){oldstrategy[i]=0; newstrategy[i]=0;}
 	welfare = 0.;
 	perc = 0.;
-	perdelta = 1.;
-	perd = 0. ;
+	perd = 1. ;
+	pergen = 0.;
+	peropp = 0.;
 	
 	// Now I fill up the output files at t=0
-	printstuffsingleloop(filet, fileag, 0, welfare, perc, perd, perdelta, newstrategy ,cons); 	// Print time, welfare, percentages and the state of all agents at time t=0
+	printstuffsingleloop(filet, fileag, 0, welfare, perc, perd, pergen, peropp, newstrategy ,cons); 	// Print time, welfare, percentages and the state of all agents at time t=0
 	//********************************************************************************************************************//
 	
 	/**************** HERE STARTS THE BIG TIME LOOP **********************/
-	
+	//int M=int(cons.M);
+	//int thetransition[16];
+	//int k;
 	for(t=0; t<cons.T ; t++){
-		
 		//Here players update their strategies
 		updatestrategy(oldstrategy, newstrategy, cons, gslpointer);
 		//Here I compute the total welfare and the various percentages.
-		computetotalwelfare(newstrategy, welfare, perc, perd, perdelta, cons);
+		computetotalwelfare(newstrategy, welfare, perc, perd, pergen, peropp, cons);
+		//cout<<"got here"<<endl;
 		//Here I print the state of the system at time t
 		if(t%100==0) cout<<"Time is "<<t<<endl;
-		printstuffsingleloop(filet, fileag, t, welfare, perc, perd, perdelta, newstrategy ,cons);
+		printstuffsingleloop(filet, fileag, t, welfare, perc, perd, pergen, peropp, newstrategy ,cons);
 		//Update oldstrategy
 		nextround(oldstrategy,newstrategy,cons);
 

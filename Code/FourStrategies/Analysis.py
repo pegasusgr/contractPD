@@ -64,11 +64,13 @@ close()
 plt.plot(data[0], data[2])
 plt.plot(data[0], data[3])
 plt.plot(data[0], data[4])
+plt.plot(data[0], data[5])
 plt.title("Percentages of agents playing C, D and Delta as a function of time")
 legend1=r'$C$'
 legend2=r'$D$'
-legend3=r'$\Delta$'
-plt.legend((legend1,legend2,legend3),loc=2)
+legend3=r'$\Delta^+$'
+legend4=r'$\Delta^-$'
+plt.legend((legend1,legend2,legend3,legend4),loc=2)
 plt.xlabel('time')
 plt.ylabel('percentages')
 text(T-T/5, 0.8, stringa, bbox=dict(facecolor='orange', alpha=0.8))
