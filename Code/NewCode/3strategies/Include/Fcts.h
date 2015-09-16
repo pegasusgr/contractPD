@@ -332,7 +332,7 @@ void updatestrategyimitation(int *oldstrategy, int *newstrategy, Constants cons,
 				cout<<"ERROR in assigning the average payoffs !!!!!!"<<endl;
 				exit(3);
 		}
-		cout<<"C and D sono "<<average[0]<<"  "<<average[1]<<" for strategy "<<oldstrategy[i]<<endl;
+		
 		/******Now I renormalize the payoffs and compute the probabilities for each of the strategies*****/
 		sum = 0;
 		if(nc == 0){probarr[0]=0;} //Yeah, here it could have been done more elegantly with a bool array, but it's only 3 strategies anyway!
