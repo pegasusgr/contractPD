@@ -103,15 +103,11 @@ int main() {
 		oldstrategy[i]=1;
 		newstrategy[i]=1;	
 	}
-	for(i=0; i < cons.N/2 ; i++){
-		oldstrategy[i]=0;
-		newstrategy[i]=0;	
-	}
 	//for(i=0; i <cons.N; i++ ){oldstrategy[i]=0; newstrategy[i]=0;}
 	welfare = 0.;
-	perc = 0.5;
-	perdelta = 0.5;
-	perd = 0. ;
+	perc = 0.;
+	perdelta = 0.;
+	perd = 1. ;
 	
 	// Now I fill up the output files at t=0
 	printstuffsingleloop(filet, fileag, 0, welfare, perc, perd, perdelta, newstrategy ,cons); 	// Print time, welfare, percentages and the state of all agents at time t=0
