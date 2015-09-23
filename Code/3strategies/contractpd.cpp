@@ -82,6 +82,7 @@ int main() {
 		filet << "#This is in the form of t, welfare, C percentage, D percentage and delta percentage" << endl;
 	}
 	
+	
 	// The AGENTS file
 	fileag.open(filenameag,ios::out|ios::trunc); //Open the time file
 	if(fileag.is_open()){
@@ -116,13 +117,12 @@ int main() {
 	/**************** HERE STARTS THE BIG TIME LOOP **********************/
 	
 	for(t=1; t<cons.T ; t++){
-		
 		/*  Here we give to players the possibility to mutate to new strategies */
-		changeformutation(oldstrategy, cons, gslpointer);		
+		changeformutation(oldstrategy, cons, gslpointer);	
 		/* Here players update their strategies according to a logit best response */
 		//updatestrategy(oldstrategy, newstrategy, cons, gslpointer);
 		/* Here players update their strategies according to a logit imitation rule */
-		updatestrategyimitation(oldstrategy, newstrategy, cons, gslpointer);
+		updatestrategyimitationnodeltatocoop(oldstrategy, newstrategy, cons, gslpointer);	
 		//Here I compute the total welfare and the various percentages.
 		computetotalwelfare(newstrategy, welfare, perc, perd, perdelta, cons);
 		//Here I print the state of the system at time t
