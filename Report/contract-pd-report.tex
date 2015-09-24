@@ -3,6 +3,9 @@
 \usepackage{amssymb,amsmath}
 \usepackage{subcaption} %That's for the subfigures
 \usepackage{fullpage} %Use this if you have a problem with space.
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+
 
 \author{Stefano Duca \and Alexandros Rigos}
 \title{Contracts in an Evolutionary Prisoner's Dilemma Game: A Report}
@@ -90,7 +93,52 @@ The picture is obtained in the case of agents choosing their strategy according 
 Unfortunately, as shown in the picture, it seems that there is no difference in the level of cooperation between the "control case" where $\delta=0$ \ref{fig:BR_nodelta} and the case where $\delta>0$  \ref{fig:BR_nodelta} and such that to cooperate is a best response to $\Delta$.
 
 
-Logit best response with 4 strategies and directional transitions 
+\subsection{Logit best response with 4 strategies and directional transitions}
+We now introduce another strategy: -Delta. Players that use this strategy, if their opponent cooperates, will take a larger part of the pie. More specifically, they will get $r+\Delta$ and their opponent will receive $r-\Delta$. The payoff matrix is, therefore amended to be the following:
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline 
+• & C & D &+Delta & -Delta  \\ 
+\hline 
+C & $r$ , $r$ & $-a$ , 1 & $r+\Delta$, $r-\Delta$ & $r-\Delta$, $r+\Delta$ \\ 
+\hline 
+D & 1 , $-a$ & 0,0 & 1, $-a$ & 1,$-a$\\ 
+\hline 
++Delta & $r -\Delta$, $r+\Delta$ & $-a$, 1 & $r$ , $r$& $r-2\Delta$, $r+2\Delta$ \\ 
+\hline 
+-Delta & $r+\Delta$ , $r-\Delta$ & $-a$, 1 & $r+2\Delta$ , $r-2\Delta$ & $r$ ,$ r$\\ 
+\hline 
+\end{tabular} 
+\end{center}
+
+Similarly as in previous cases, there is a logit rule in the way that agents switch stratetegies. Crucially, we allow only for specific transitions to tale place. These are shown in the following diagram. An arrow indicates a transition that is allowed. 
+
+\begin{center}
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3cm,
+  thick,main node/.style={circle,fill=blue!20,draw,font=\sffamily\Large\bfseries}]
+  \node[main node] (1) {$~C$};
+  \node[main node] (2) [below left of=1] {$+\Delta$};
+  \node[main node] (3) [below right of=2] {$~D$};
+  \node[main node] (4) [below right of=1] {$-\Delta$};
+
+  \path[every node/.style={font=\sffamily\small}]
+    (1) edge node [left] { } (4)
+        edge [bend right] node[left] { } (2)
+        edge [loop above] node { } (1)
+    (2) edge node [right] { } (1)
+	%edge node {} (4)
+        edge [loop left] node {} (2)
+        edge [bend right] node[left] {} (3)
+    (3) edge node [right] {} (2)
+        edge [bend right] node[right] {} (4)
+    (4) edge node [left] {} (3)
+        edge [loop right] node {} (4)
+        edge [bend right] node[right] {} (1);
+\end{tikzpicture}
+\end{center}
+
+Results show that the directional transitions do not change the percentage of cooperators in the long run (see the following figures).
+
 
 Imitation
 
