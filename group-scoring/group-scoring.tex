@@ -1,5 +1,9 @@
 \documentclass[12pt,a4paper]{article}
 
+\usepackage[nottoc,numbib]{tocbibind} %This is to make the bibliography appear in the table
+
+\bibliographystyle{ieeetr} %Here I set the style for the bibliography
+
 \title{Group Scoring: Some Ideas}
 
 
@@ -9,11 +13,11 @@
 \maketitle
 \section{Idea for the Model}
 
-We want to work on group scoring but based on the original paper by Nowak (1998): ``Evolution of indirect reciprocity by image scoring.''
+We want to work on group scoring but based on the original paper by Nowak \cite{Nowak1998}: ``Evolution of indirect reciprocity by image scoring.''
 
-The difference between our idea and  Nax, Perc, Szolnoki and Helbing (2015), is that we want to study the system under replicator dynamics.
+The difference between our idea and  Nax, Perc, Szolnoki and Helbing (2015) \cite{Nax2015}, is that we want to study the system under replicator dynamics.
 
-In each generation $N$ agents are born. They all have a score $\star_i^t$ starting with the value $\star_i^0=0$ for all agents $i$ and a hard-wired strategy: either Cooperate (C) or Defect (D). They are assortatively drawn into groups of size $s$ based on their score. Ties are broken at random. Let $g_i$ denote the set of agents in agent $i$'s group except for agent $i$. Each agent $i$ executes his/her strategy in his/her respective group and receives cumulative payoff according to a linear public goods game played within the group (see Nax et al.). He/she also learns how many agents, other than him/herself, in his/her group played C; indicate this number by $l_i$.
+In each generation $N$ agents are born. They all have a score $\star_i^t$ starting with the value $\star_i^0=0$ for all agents $i$ and a hard-wired strategy: either Cooperate (C) or Defect (D). They are assortatively drawn into groups of size $s$ based on their score. Ties are broken at random. Let $g_i$ denote the set of agents in agent $i$'s group except for agent $i$. Each agent $i$ executes his/her strategy in his/her respective group and receives cumulative payoff according to a linear public goods game played within the group (see Nax et al.\cite{Nax2015}). He/she also learns how many agents, other than him/herself, in his/her group played C; indicate this number by $l_i$.
 
 Then, each agent assigns $l_i$ stars to his/her fellow group members.\footnote{Note that other rules are possible and will be explored.} So, each agent $j$ is assigned $\star_j^t=\star_j^{t-1}+\sum_{i\in g_j} l_i$ stars by his/her group-mates. 
 
@@ -31,6 +35,8 @@ After that, each agent produces a number of offspring proportional to his/her fi
 \section{What we expect}
 $\Rightarrow$ COOPERATION! 
 
-Why? Because of the haystack model. It shares some similar concepts. 
+Why? Because of the haystack model. It shares some similar concepts.
+See for example \cite{SMITH1964} 
 
+\bibliography{library} %Here I add the bibtech file
 \end{document}
