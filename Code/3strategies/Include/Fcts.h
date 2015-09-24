@@ -405,3 +405,148 @@ void changeformutation(int *strategy, Constants cons, gsl_rng *gslpointer){
 	
 	return ;
 }
+
+
+/**** This function updates the strategy of each player based on the imitation rule! See guide for more details *****/
+/***** The difference with the above function is that here a person offers a contract to somebody only if he was a defector the turn before (to make him change). If a person is already a cooperator, the offer of a contract to him is just like normal cooperation  *****/
+void updatestrategyimitationnodeltatocoop(int *oldstrategy, int *newstrategy, Constants cons, gsl_rng *gslpointer){
+	
+	int M=3; //The number of strategies (for sake of generalization)
+	int i;
+	int nc, nd, ndelta, totnn; //Number of n.n. playing each strategy and total number of n.n.
+	vector<int> neinum;	//The array that contains the number of n.n. playing each strategy.
+	double randomnum; //A random number
+	double probarr[M]; //Here I will store the probability for each of the strategies to be played
+	double average[M]; //Here I will store the average utility for each of the strategies as it appears to player i
+	double sum; //sum variable
+	double cumprob[M]; //The array of cumulative probabilities
+	double payoff[cons.N]; //The array storing the payoff for each agent at time t-1
+	int k; //dummy variable
+	vector<int> neiid; //An array that contains the identity of the n.n. of player i
+	int olddefector; //This is one if player i was a defector at t-1 and 0 otherwise
+	
+	//First of all, let's compute the average payoff for each agent i in the round t-i
+	for(i=0; i<cons.N; i++){
+		//getnumber of each thing (as a fct of i, oldstrategy and the type of lattice);
+		neinum=neighborstrategies(i, oldstrategy, cons);	
+		nc=neinum[0];
+		nd=neinum[1];
+		ndelta=neinum[2];			
+		totnn = nc + nd + ndelta; //Compute the total number of neighbours
+		if(oldstrategy[i]==1){
+			olddefector = 1;
+		}
+		else{olddefector = 0;}
+		//Now I compute the payoff for agent i:
+		switch(oldstrategy[i]){
+			
+			case 0:
+				payoff[i] = 1.*(nc*cons.r -nd*cons.a +ndelta*(cons.r+cons.delta*olddefector))/totnn; //The payoff that you get from cooperating. He gets the plus delta just if he was a defector the turn before
+				break;
+			
+			case 1:
+				payoff[i] = 1.*(nc + ndelta)/totnn; //The payoff that you get from defecting
+				break;
+				
+			case 2:
+				payoff[i] = 1.*(nc*cons.r -nd*cons.a + ndelta*cons.r)/totnn; //The payoff that you get from playing delta. Here I give to the people already cooperating only delta
+				break;
+				
+			default:
+				cout<<"ERROR!!!!!!"<<endl;
+				exit(3);
+		}
+	}
+	
+	// Now let's see what is the new strategy for agent i
+	for(i=0; i< cons.N; i++){
+		
+		//First of all, let's see who are the n.n. of player i
+		neiid = neighbors(i, cons);
+		//and let's see how many play each strategy:
+		neinum=neighborstrategies(i, oldstrategy, cons);	
+		nc=neinum[0];
+		nd=neinum[1];
+		ndelta=neinum[2];			
+		totnn = nc + nd + ndelta; //Compute the total number of neighbours
+		
+		/*******Now let's compute the payoff that i sees for each strategy (including himself) ****************************/
+		for(k=0; k< M; k++){ average[k]=0;} //Set the average array to zero
+		for(k=0; k<totnn; k++){
+			switch(oldstrategy[neiid[k]]){
+			
+			case 0:
+				average[0] = average[0] + payoff[neiid[k]]; //Because neiid[k] is a coop
+				break;
+			
+			case 1:
+				average[1] = average[1] + payoff[neiid[k]]; //Because neiid[k] is a def
+				break;
+				
+			case 2:
+				average[2] = average[2] + payoff[neiid[k]]; //Because neiid[k] is playing delta
+				break;
+				
+			default:
+				cout<<"ERROR in assigning the average payoffs !!!!!!"<<endl;
+				exit(3);
+			}
+		
+		}
+		//Now we add the strategy of agent i itself
+		switch(oldstrategy[i]){
+			
+			case 0:
+				average[0] = average[0] + payoff[i]; //Because i is a coop
+				nc++;
+				break;
+			
+			case 1:
+				average[1] = average[1] + payoff[i]; //Because i is a def
+				nd++; 
+				break;
+				
+			case 2:
+				average[2] = average[2] + payoff[i]; //Because i is playing delta
+				ndelta++;
+				break;
+				
+			default:
+				cout<<"ERROR in assigning the average payoffs !!!!!!"<<endl;
+				exit(3);
+		}
+		
+		/******Now I renormalize the payoffs and compute the probabilities for each of the strategies*****/
+		sum = 0;
+		if(nc == 0){probarr[0]=0;} //Yeah, here it could have been done more elegantly with a bool array, but it's only 3 strategies anyway!
+		else{
+			probarr[0] = exp(cons.beta*(average[0]/nc)); //The logit prob
+			sum = sum  + probarr[0];
+		}
+		if(nd == 0){probarr[1]=0;}
+		else{
+			probarr[1] = exp( cons.beta*(average[1]/nd) ); //The logit prob
+			sum = sum + probarr[1];
+		}
+		if(ndelta==0){probarr[2]=0;}
+		else{
+			probarr[2] = exp(cons.beta*(average[2]/ndelta)); //The logit prob
+			sum = sum + probarr[2];
+		}
+		//Here I renormalize the probability but I have to do the first by hand due to cumprob
+		probarr[0] = probarr[0]/sum;
+		cumprob[0]=probarr[0];
+		for(k=1; k < M; k++){
+			probarr[k] = probarr[k]/sum;
+			cumprob[k]=cumprob[k-1] + probarr[k];
+		}
+		// Now I sample the random number:
+		randomnum = gsl_ran_flat(gslpointer,0,1); //Generate a random number btw 0 and 1. Note that I use utility here just to not use another variable
+    	k=binaryprobsearch(&cumprob[0],M,randomnum); //Here I compute which strategy is the agent i is using. Note that I use k here just to not use another variable
+		//Hence:
+		newstrategy[i] = k;
+	}
+	
+	return ;	
+}
+/**************************************************************************************************************/
