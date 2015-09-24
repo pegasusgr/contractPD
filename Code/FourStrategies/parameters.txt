@@ -8,7 +8,7 @@ T= 100
 L= 0
 
 #value of the contract:
-delta= 0.3
+delta= 0
 
 #beta value for the logit:
 beta= 3
