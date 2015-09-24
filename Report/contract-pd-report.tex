@@ -34,18 +34,30 @@ Delta & r- $\Delta$, r+$\Delta$ & -a, 1 & r,r, \\
 
 The player play a logit best response with parameter delta, responding to the strategy array of the previous round.
 
-\section{Notes on the code}
-\begin{enumerate}
-\item  So far we consider 3 types of lattice:
-0 stands for squared lattice with Von Neumann n.n. ;
-1 stands for squared lattice with Moore n.n.;
-2 stands for ring lattice.
+We implement the idea in several different ways:
 
-\item 0 is C, 1 is D and 2 is Delta
-\end{enumerate}
+Logit best response
 
+Logit best response with 4 strategies and directional transitions 
 
+Imitation
 
+Imitation with delta conditional on last round's decisions.
 
+\section{Future}
+
+\subsection{Best responders with imitators}
+
+\section{other ideas}
+group scoring with stars and intermediate rounds of interaction
+%\section{Notes on the code}
+%\begin{enumerate}
+%\item  So far we consider 3 types of lattice:
+%0 stands for squared lattice with Von Neumann n.n. ;
+%1 stands for squared lattice with Moore n.n.;
+%2 stands for ring lattice.
+
+%\item 0 is C, 1 is D and 2 is Delta
+%\end{enumerate}
 
 \end{document}
