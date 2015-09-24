@@ -1,0 +1,36 @@
+\documentclass[12pt,a4paper]{article}
+
+\title{Group Scoring: Some Ideas}
+
+
+\author{Stefano Duca \and Alexandros Rigos}
+
+\begin{document}
+\maketitle
+\section{Idea for the Model}
+
+We want to work on group scoring but based on the original paper by Nowak (1998): ``Evolution of indirect reciprocity by image scoring.''
+
+The difference between our idea and  Nax, Perc, Szolnoki and Helbing (2015), is that we want to study the system under replicator dynamics.
+
+In each generation $N$ agents are born. They all have a score $\star_i^t$ starting with the value $\star_i^0=0$ for all agents $i$ and a hard-wired strategy: either Cooperate (C) or Defect (D). They are assortatively drawn into groups of size $s$ based on their score. Ties are broken at random. Let $g_i$ denote the set of agents in agent $i$'s group except for agent $i$. Each agent $i$ executes his/her strategy in his/her respective group and receives cumulative payoff according to a linear public goods game played within the group (see Nax et al.). He/she also learns how many agents, other than him/herself, in his/her group played C; indicate this number by $l_i$.
+
+Then, each agent assigns $l_i$ stars to his/her fellow group members.\footnote{Note that other rules are possible and will be explored.} So, each agent $j$ is assigned $\star_j^t=\star_j^{t-1}+\sum_{i\in g_j} l_i$ stars by his/her group-mates. 
+
+Agents are then pooled together and assortatively re-matched based on their updated score. They then play again, receive stars and so on. The process is repeated for $k$ times.\footnote{One could also assume that $k$ follows some probability distribution which can be explored later.} 
+
+After that, each agent produces a number of offspring proportional to his/her fitness and expires. Offspring adopt their parents' strategies. The population is then renormalized to $N$, and star scores and payoffs are reset to zero. This procedure is being repeated for many generations.
+\section{Possible Changes}
+\begin{itemize}
+	\item One could let the decision on whether to award stars to be replicable or to follow some reinforcement learning heuristic.
+	\item Agents could be let to condition their decision to award stars based on the star rating of their team members.
+	\item Awarding stars can be costly.
+	\item Social preferences. Agents may make a ``rational'' decision on whether they want to award stars or not based on social preferences. The idea is that giving stars helps society and therefore socially-minded individuals would prefer to do so.
+\end{itemize}
+
+\section{What we expect}
+$\Rightarrow$ COOPERATION! 
+
+Why? Because of the haystack model. It shares some similar concepts. 
+
+\end{document}
