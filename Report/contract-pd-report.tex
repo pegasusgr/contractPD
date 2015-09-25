@@ -4,6 +4,7 @@
 \usepackage{subcaption} %That's for the subfigures
 \usepackage{fullpage} %Use this if you have a problem with space.
 \usepackage{tikz}
+\usepackage[sort]{natbib}
 \usetikzlibrary{arrows}
 
 \author{Stefano Duca \and Alexandros Rigos}
@@ -175,6 +176,8 @@ Imitation with delta conditional on last round's decisions.
 \subsection{Best responders with imitators}
 We are thinking of approaching the problem in a different way. In a model where players may be either (i) best responding with probability $p$ or (ii) imitating with probability $1-p$. 
 
+Intuitively, players do not always just imitate, but with some probability they may be thinking about the situation a bit more and best-respond. A reference for a research paper that does something similar is \citet{DziubinskiRoy2012}.
+
 We think that this might work. This would be because as soon as a few $\Delta$ strategist appear close together, best responders around them would follow $C$. More than that, imitators around them would start cooperating too. So, the idea is that a (or a few) $\Delta$ individuals may work like seeds for the spread of cooperation.
 %\section{Notes on the code}
 %\begin{enumerate}
@@ -185,5 +188,7 @@ We think that this might work. This would be because as soon as a few $\Delta$ s
 
 %\item 0 is C, 1 is D and 2 is Delta
 %\end{enumerate}
+\bibliographystyle{chicago}
+\bibliography{bibliography}
 
 \end{document}
