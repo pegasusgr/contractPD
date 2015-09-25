@@ -65,7 +65,7 @@ plt.plot(data[0], data[2])
 plt.plot(data[0], data[3])
 plt.plot(data[0], data[4])
 plt.plot(data[0], data[5])
-plt.title("Percentages of agents playing C, D and Delta as a function of time")
+plt.title("Percentages of agents playing C, D, Delta and -Delta as a function of time")
 legend1=r'$C$'
 legend2=r'$D$'
 legend3=r'$\Delta^+$'
