@@ -4,6 +4,7 @@
 \usepackage{subcaption} %That's for the subfigures
 \usepackage{fullpage} %Use this if you have a problem with space.
 \usepackage{tikz}
+\usepackage[sort]{natbib}
 \usetikzlibrary{arrows}
 
 \author{Stefano Duca \and Alexandros Rigos}
@@ -89,14 +90,14 @@ The picture is obtained in the case of agents choosing their strategy according 
 \label{fig:BR}
 \end{figure} 
 
-Unfortunately, as shown in the picture, it seems that there is no difference in the level of cooperation between the "control case" where $\delta=0$ \ref{fig:BR_nodelta} and the case where $\delta>0$  \ref{fig:BR_nodelta} and such that to cooperate is a best response to $\Delta$.
+Unfortunately, as shown in the picture, it seems that there is no difference in the level of cooperation between the "control case" where $\delta=0$ fig. \ref{fig:BR_nodelta} and the case where $\delta>0$  fig. \ref{fig:BR_nodelta} and such that to cooperate is a best response to $\Delta$.
 
 \subsection{Imitation}
 Here we introduce another rule with which players update their strategies.
 
 Instead of best responding, each agent can imitate the strategies that its neighbours are playing with a probability depending on the average payoff that each strategy can materialize.
 
-Based on Eshel \cite{Eshel1998} we implement the  imitation rule in the following way:
+Based on \cite{Eshel1998} we implement the  imitation rule in the following way:
 \begin{itemize}
 \item Each agent observes the payoff that every one of its neighbours received and the strategy they played.
 
@@ -140,7 +141,7 @@ The picture is obtained in the case of agents imitating their neighbours strateg
 \label{fig:IM}
 \end{figure} 
 
-Also in this case, as shown in the picture, it seems that there is no difference in the level of cooperation between the "control case" where $\delta=0$ \ref{fig:IM_nodelta} and the case where $\delta>0$  \ref{fig:IM_nodelta} and such that to cooperate leads to the highest payoff when playing close to a $\Delta$ player.
+Also in this case, as shown in the picture, it seems that there is no difference in the level of cooperation between the "control case" where $\delta=0$ fig. \ref{fig:IM_nodelta} and the case where $\delta>0$  fig. \ref{fig:IM_nodelta} and such that to cooperate leads to the highest payoff when playing close to a $\Delta$ player.
 
 \subsubsection{Variant on the payoff}
 
@@ -177,7 +178,7 @@ The picture is obtained in the case of agents imitating their neighbours strateg
 \end{figure} 
 
 
-\subsection{Logit best response with 4 strategies and directional transitions}
+\subsection{Logit best response with 4 strategies and directed transitions}
 We now introduce another strategy: $-\Delta$. Players that use this strategy, if their opponent cooperates, will take a larger part of the pie. More specifically, they will get $r+\delta$ and their opponent will receive $r-\delta$. The payoff matrix is, therefore amended to be the following:
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
@@ -195,8 +196,9 @@ $-\Delta$ & $r+\delta$ , $r-\delta$ & $-a$, 1 & $r+2\delta$ , $r-2\delta$ & $r$ 
 \end{tabular} 
 \end{center}
 
-Similarly as in previous cases, there is a logit rule in the way that agents switch stratetegies. Crucially, we allow only for specific transitions to tale place. These are shown in the following diagram. An arrow indicates a transition that is allowed. 
+Similarly as in in the previous case, there is a logit rule in the way that agents switch strategies. Crucially, we allow only for specific transitions to tale place. These are shown in Figure \ref{diagram}.  
 
+\begin{figure}
 \begin{center}
 \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3cm,
   thick,main node/.style={circle,fill=blue!20,draw,font=\sffamily\Large\bfseries}]
@@ -220,16 +222,45 @@ Similarly as in previous cases, there is a logit rule in the way that agents swi
         edge [bend right] node[right] {} (1);
 \end{tikzpicture}
 \end{center}
+\caption{Transitions in the 4 strategy case. An arrow indicates a transition that is allowed.}\label{diagram}
+\end{figure}
 
-Results show that the directional transitions do not change the percentage of cooperators in the long run (see the following figures).
+Some of the results the simulations gave us can be seen in figure \ref{fig:4strat}. Results show that the introduction of the $-\Delta$ strategy increases the amount of defectors. Moreover, the $-\Delta$ strategists do better than the more cooperative strategies but worse than defect.
+%Results show that the directional transitions do not change the percentage of cooperators in the long run (see Figure \ref{fig:4strat}).
+\begin{figure}[htbp] 
+\centering
+\begin{subfigure}[t]{0.47\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{./Figures/4strategies-nodelta}
+  \caption{Percentage of players playing each strategy in case the value of $\delta$ is 0.}
+  \label{fig:4strat_nodelta} 
+\end{subfigure}%
+~
+~
+\begin{subfigure}[t]{0.47\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{./Figures/4strategies-delta}
+  \caption{Percentage of players playing each strategy in case the value of $\delta$ is $0.35$. Note that for this value $r+\delta >1$ and hence $C$ is the best response to $\Delta$.}
+  \label{fig:4strat_delta} 
+\end{subfigure}
+\caption{Percentage of players playing each strategy for two different values of $\delta$.
+Fig (a) shows the percentage of players defecting (green line) in the case $\delta =0$. This is the case in which bot strategies $\Delta$ and $-\Delta$ are equivalent to cooperation in terms of payoffs but different in terms of transitions.
+We can see how in fig (b) there is significant increase in both defectors and $-\Delta$ strategists.
+The kind of lattice used in the simulation is the Von Neumann lattice.
+The picture is obtained in the case of agents choosing their strategy according to a logit best response with directed transitions.
+}
+\label{fig:4strat}
+\end{figure} 
 
 
 \section{Future}
 
 \subsection{Best responders with imitators}
+We are thinking of approaching the problem in a different way. In a model where players may be either (i) best responding with probability $p$ or (ii) imitating with probability $1-p$. 
 
-\section{other ideas}
-group scoring with stars and intermediate rounds of interaction
+Intuitively, players do not always just imitate, but with some probability they may be thinking about the situation a bit more and best-respond. A reference for a research paper that does something similar is \citet{DziubinskiRoy2012}.
+
+We think that this might work. This would be because as soon as a few $\Delta$ strategist appear close together, best responders around them would follow $C$. More than that, imitators around them would start cooperating too. So, the idea is that a (or a few) $\Delta$ individuals may work like seeds for the spread of cooperation.
 %\section{Notes on the code}
 %\begin{enumerate}
 %\item  So far we consider 3 types of lattice:
@@ -239,5 +270,7 @@ group scoring with stars and intermediate rounds of interaction
 
 %\item 0 is C, 1 is D and 2 is Delta
 %\end{enumerate}
+\bibliographystyle{chicago}
+\bibliography{bibliography}
 
 \end{document}
