@@ -16,27 +16,39 @@
 \section{The main idea}
 Here we are playing what we call a contract game in a prisoner's dilemma on a spatial lattice.
 
-The idea is that a player can offer a part of what he earns ($\Delta$) to the other player to make it convienent to cooperate, conditional on the event of both players cooperating. Of course he might be tempted to defect but, due to the preference of errors, maybe the cooperation will be stable.
+The idea is that a player can offer a part of what he earns ($\Delta$) to the other player to make it convenient to cooperate, conditional on the event of both players cooperating. Of course he might be tempted to defect but, due to the preference of errors, maybe the cooperation will be stable.
 
-Here is the payoff matrix of the game:
-%\begin{table}
-%\centering
+In its simplest form, the model we propose is the following:
+\begin{itemize}
+\item Agents are placed on a network, such as a ring, a Von Neumann lattice or a Moore lattice.
+
+\item Agents play with their neighbours the following game:
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline 
-• & C & D & Delta \\ 
+$i 	\setminus j$ & C & D & $\Delta$ \\ 
 \hline 
-C & r,r & -a,1 & r+$\Delta$, r-$\Delta$ \\ 
+C & r,r & -a,1 & r+$\delta$, r-$\delta$ \\ 
 \hline 
 D & 1,-a & 0,0 & 1, -a \\ 
 \hline 
-Delta & r- $\Delta$, r+$\Delta$ & -a, 1 & r,r, \\ 
+$\Delta$ & r- $\delta$, r+$\delta$ & -a, 1 & r,r \\ 
 \hline 
 \end{tabular} 
 \end{center}
-%\end{table}
+The payoff matrix represents the game that we described above.
+In addition to the cooperate and defect, an agent can choose to play the strategy $\Delta$ that represents the possibility of offering an unequal share of the cooperation reward to the other player.
+The offer is a contract that states that in the case of the receiving player cooperating, it will receive an amount $\delta$ in addition to the cooperation reward.
+The $\delta$ is taken from the share of the offering player so that there is no creation of wealth.
+Hence $\delta \in \left[0,r \right]$.
+In the case of two agents both offering the contract, each agent receives the fair cooperation payoff.
+As usual in prisoner's dilemma games, $r$ indicates the reward and $a$ the sucker's payoff. Hence we have that $  -a < 0 < r < 1 $.
 
-The player play a logit best response with parameter delta, responding to the strategy array of the previous round.
+\item Agents can observe the payoffs obtained by their neighbours and imitate the strategy that seems to lead to the higher payoff.
+We also allow for errors in the imitation function.
+It is important to notice that due to the presence of errors it is possible for any strategy to emerge even if at a given time no agent on the network is playing it.
+\end{itemize}
+
 
 We implement the idea in several different ways:
 
