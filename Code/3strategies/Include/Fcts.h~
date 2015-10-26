@@ -425,23 +425,18 @@ void updatestrategyimitationnodeltatocoop(int *oldstrategy, int *newstrategy, Co
 	vector<int> neiid; //An array that contains the identity of the n.n. of player i
 	int olddefector; //This is one if player i was a defector at t-1 and 0 otherwise
 	
-	cout<<"check 1"<<endl;
 	//First of all, let's compute the average payoff for each agent i in the round t-i
 	for(i=0; i<cons.N; i++){
 		//getnumber of each thing (as a fct of i, oldstrategy and the type of lattice);
-		cout<<"check 2"<<endl;
 		neinum=neighborstrategies(i, oldstrategy, cons);	
-		cout<<"check 2.5"<<endl;
 		nc=neinum[0];
 		nd=neinum[1];
 		ndelta=neinum[2];			
 		totnn = nc + nd + ndelta; //Compute the total number of neighbours
-		cout<<"check 3"<<endl;
 		if(oldstrategy[i]==1){
 			olddefector = 1;
 		}
 		else{olddefector = 0;}
-		cout<<"check 4"<<endl;
 		//Now I compute the payoff for agent i:
 		switch(oldstrategy[i]){
 			
@@ -555,3 +550,11 @@ void updatestrategyimitationnodeltatocoop(int *oldstrategy, int *newstrategy, Co
 	return ;	
 }
 /**************************************************************************************************************/
+
+
+
+/****************************************************************************************************************************************************************/
+/******************** NEW STUFF STARTS HERE !!! **************************************/
+/**************************************************************************************************************************************************************************/
+
+/****** This function allows to 
